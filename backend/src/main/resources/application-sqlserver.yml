@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${VELO_DB_URL:jdbc:sqlserver://localhost:1433;databaseName=velo;encrypt=true;trustServerCertificate=true}
+    username: ${VELO_DB_USER:velo}
+    password: ${VELO_DB_PASSWORD:Velo@Senha2026}

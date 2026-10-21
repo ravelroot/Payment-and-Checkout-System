@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${VELO_DB_URL:jdbc:mysql://localhost:3306/velo?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC}
+    username: ${VELO_DB_USER:velo}
+    password: ${VELO_DB_PASSWORD:velo}

@@ -1,0 +1,14 @@
+IF DB_ID('velo') IS NULL
+    CREATE DATABASE velo COLLATE Latin1_General_100_CI_AS_SC_UTF8;
+GO
+IF SUSER_ID('velo') IS NULL
+    CREATE LOGIN velo WITH PASSWORD = 'Velo@Senha2026', CHECK_POLICY = OFF;
+GO
+USE velo;
+GO
+IF USER_ID('velo') IS NULL
+BEGIN
+    CREATE USER velo FOR LOGIN velo;
+    ALTER ROLE db_owner ADD MEMBER velo;
+END
+GO

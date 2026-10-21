@@ -1,0 +1,54 @@
+server:
+  port: ${VELO_PORT:8080}
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: velo
+  datasource:
+    url: ${VELO_DB_URL:jdbc:h2:file:./data/velo;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${VELO_DB_USER:sa}
+    password: ${VELO_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    locations: classpath:db/migration/{vendor}
+    baseline-on-migrate: false
+    clean-disabled: true
+  threads:
+    virtual:
+      enabled: true
+
+velo:
+  public-url: ${VELO_PUBLIC_URL:http://localhost:8080}
+  seed: ${VELO_SEED:true}
+  session:
+    idle-minutes: 20
+    max-minutes: 30
+  orders:
+    payment-window-minutes: 60
+  shipping:
+    flat-rate: 19.90
+    free-above: 299.00
+  payments:
+    provider: ${VELO_PAYMENT_PROVIDER:SIMULATED}
+    max-installments: 10
+    stripe:
+      secret-key: ${STRIPE_SECRET_KEY:}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN

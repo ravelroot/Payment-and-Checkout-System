@@ -1,0 +1,16 @@
+target/
+node_modules/
+dist/
+backend/data/
+backend/deps.log
+*.log
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+backend/baixar-dependencias.cmd
+*.tsbuildinfo

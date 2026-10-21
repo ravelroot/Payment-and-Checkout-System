@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${VELO_DB_URL:jdbc:mariadb://localhost:3307/velo}
+    username: ${VELO_DB_USER:velo}
+    password: ${VELO_DB_PASSWORD:velo}

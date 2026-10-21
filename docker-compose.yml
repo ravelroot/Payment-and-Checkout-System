@@ -1,0 +1,104 @@
+name: velo
+
+services:
+  postgresql:
+    profiles: [postgresql]
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: velo
+      POSTGRES_USER: velo
+      POSTGRES_PASSWORD: velo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U velo -d velo"]
+      interval: 5s
+      retries: 20
+
+  mysql:
+    profiles: [mysql]
+    image: mysql:8.4
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    environment:
+      MYSQL_DATABASE: velo
+      MYSQL_USER: velo
+      MYSQL_PASSWORD: velo
+      MYSQL_ROOT_PASSWORD: velo-root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uvelo", "-pvelo"]
+      interval: 5s
+      retries: 30
+
+  mariadb:
+    profiles: [mariadb]
+    image: mariadb:11.4
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    environment:
+      MARIADB_DATABASE: velo
+      MARIADB_USER: velo
+      MARIADB_PASSWORD: velo
+      MARIADB_ROOT_PASSWORD: velo-root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 30
+
+  sqlserver:
+    profiles: [sqlserver]
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Velo@Admin2026
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Velo@Admin2026' -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 5s
+      retries: 40
+
+  sqlserver-init:
+    profiles: [sqlserver]
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - ./docker/sqlserver/init.sql:/init.sql:ro
+    entrypoint: ["/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "sqlserver", "-U", "sa", "-P", "Velo@Admin2026", "-i", "/init.sql", "-b"]
+    restart: "no"
+
+  oracle:
+    profiles: [oracle]
+    image: gvenzl/oracle-free:23-slim
+    environment:
+      ORACLE_PASSWORD: velo-admin
+      APP_USER: velo
+      APP_USER_PASSWORD: velo
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      retries: 40
+
+volumes:
+  postgresql:
+  mysql:
+  mariadb:
+  sqlserver:
+  oracle:
