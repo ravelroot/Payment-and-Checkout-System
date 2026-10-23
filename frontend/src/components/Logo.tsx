@@ -1,21 +1,19 @@
 export function Mark({ size = 28, color = "currentColor", title }: { size?: number; color?: string; title?: string }) {
+  // Split: o valor do pedido dividido entre os recebedores
+  const altura = size * 0.85;
   return (
     <svg
-      width={(size * 328) / 296}
-      height={size}
-      viewBox="66 108 328 296"
-      fill="none"
-      stroke={color}
-      strokeWidth={24}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      width={(altura * 62) / 64}
+      height={altura}
+      viewBox="21 18 62 64"
+      fill={color}
       role={title ? "img" : undefined}
       aria-label={title}
       aria-hidden={title ? undefined : true}
     >
-      <path d="M190 200H380L369 390H201Z" />
-      <path d="M237 200V170A48 48 0 0 1 333 170V200" />
-      <path d="M80 260H140M105 315H150M80 370H140" />
+      <rect x="21" y="18" width="26" height="64" />
+      <rect x="53" y="18" width="16" height="64" />
+      <rect x="75" y="18" width="8" height="64" />
     </svg>
   );
 }
