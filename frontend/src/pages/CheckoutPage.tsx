@@ -6,6 +6,7 @@ import { useCart } from "../cart/CartContext";
 import { Icon } from "../components/Icon";
 import { Field, Page, PageHeader, ProductImage, Skeleton } from "../components/Ui";
 import { useToast } from "../components/Toast";
+import { CheckoutSteps } from "../features/CheckoutSteps";
 import { AddressFields, AddressText, emptyAddress, fieldErrors, type AddressInput } from "../features/AddressForm";
 import { initialPayment, PaymentForm, paymentBody, paymentProblem, type PaymentDraft } from "../features/PaymentForm";
 import { post } from "../lib/api";
@@ -100,12 +101,14 @@ export function CheckoutPage() {
         <Link to="/carrinho" className="back-link">
           <Icon name="arrowLeft" size={16} /> Carrinho
         </Link>
-        <PageHeader title="Entrega e pagamento" />
+        <PageHeader title="Entrega e pagamento" actions={<CheckoutSteps current={creating || addressId === null ? 1 : 2} />} />
         <div className="checkout-layout">
           <div className="stack lg">
             <section className="card pad">
               <div className="section-head">
-                <h3>Endereço de entrega</h3>
+                <h3>
+                  <span className="step-num num">1</span> Endereço de entrega
+                </h3>
                 {(addresses.data?.length ?? 0) > 0 && (
                   <button className="btn quiet sm" onClick={() => setCreating((v) => !v)}>
                     {creating ? "Usar um endereço salvo" : "Novo endereço"}
@@ -142,7 +145,12 @@ export function CheckoutPage() {
             </section>
             <section className="card pad">
               <div className="section-head">
-                <h3>Pagamento</h3>
+                <h3>
+                  <span className="step-num num">2</span> Pagamento
+                </h3>
+                <span className="muted small row tight">
+                  <Icon name="lock" size={14} /> Ambiente protegido
+                </span>
               </div>
               {options.data && cart ? (
                 <PaymentForm options={options.data} value={payment} onChange={setPayment} total={cart.total} />
@@ -175,9 +183,14 @@ export function CheckoutPage() {
             )}
             <Summary
               action={
-                <button className="btn lg block" onClick={submit} disabled={busy || !cart}>
-                  {busy ? <span className="spinner" /> : <>Finalizar pedido · {money(cart?.total)}</>}
-                </button>
+                <>
+                  <button className="btn lg block" onClick={submit} disabled={busy || !cart}>
+                    {busy ? <span className="spinner" /> : <>Finalizar pedido · {money(cart?.total)}</>}
+                  </button>
+                  <p className="trust-line">
+                    <Icon name="shield" size={14} /> O número do cartão nunca é gravado. Guardamos só a bandeira e os 4 últimos dígitos.
+                  </p>
+                </>
               }
             />
           </div>

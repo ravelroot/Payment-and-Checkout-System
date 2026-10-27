@@ -213,7 +213,7 @@ select.input,
 
 .chip-btn.on {
   background: var(--ink);
-  color: #ffffff;
+  color: var(--on-ink);
   border-color: var(--ink);
 }
 
@@ -501,7 +501,7 @@ span.chip:hover {
   place-items: center;
   border-radius: var(--radius-s);
   background: var(--ink);
-  color: #ffffff;
+  color: var(--on-ink);
   font-size: 12px;
   font-weight: 600;
 }
@@ -549,7 +549,7 @@ span.chip:hover {
   border-radius: var(--radius-l);
   background: var(--paper-2);
   border: 1px solid var(--line);
-  box-shadow: 0 12px 32px -12px rgba(21, 24, 27, 0.25);
+  box-shadow: var(--shadow-pop);
   z-index: 60;
   transform-origin: top right;
 }
@@ -789,7 +789,7 @@ span.chip:hover {
 .add-button:hover {
   background: var(--ink);
   border-color: var(--ink);
-  color: #ffffff;
+  color: var(--on-ink);
 }
 
 .add-button:disabled {
@@ -1407,7 +1407,7 @@ span.chip:hover {
   place-items: center;
   background: var(--surface);
   border: 2px solid var(--line-strong);
-  color: #ffffff;
+  color: var(--on-ink);
 }
 
 .progress li.done {

@@ -1,5 +1,5 @@
 package dev.velo.payment;
 
 public enum PaymentProvider {
-    SIMULATED, STRIPE
+    SIMULATED, STRIPE, MERCADO_PAGO
 }

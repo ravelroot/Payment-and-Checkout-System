@@ -40,10 +40,10 @@ export function DashboardPage() {
         ) : (
           <div className="stack lg">
             <div className="kpis">
-              <Kpi label="Faturamento" value={money(data.kpis.revenue)} change={data.kpis.revenueChange} />
-              <Kpi label="Pedidos pagos" value={String(data.kpis.orders)} />
-              <Kpi label="Ticket médio" value={money(data.kpis.averageTicket)} />
-              <Kpi label="Novos clientes" value={String(data.kpis.newCustomers)} />
+              <Kpi label="Faturamento" value={money(data.kpis.revenue)} change={data.kpis.revenueChange ?? delta(data.kpis.revenue, data.previous?.revenue)} />
+              <Kpi label="Pedidos pagos" value={String(data.kpis.orders)} change={delta(data.kpis.orders, data.previous?.orders ?? data.previous?.paidOrders)} />
+              <Kpi label="Ticket médio" value={money(data.kpis.averageTicket)} change={delta(data.kpis.averageTicket, data.previous?.averageTicket)} />
+              <Kpi label="Novos clientes" value={String(data.kpis.newCustomers)} change={delta(data.kpis.newCustomers, data.previous?.newCustomers)} />
             </div>
             <div className="attention">
               <Link to="/admin/pedidos?status=PAID" className="attention-item">
@@ -71,6 +71,12 @@ export function DashboardPage() {
               <section className="card pad">
                 <h3>Pedidos por situação</h3>
                 <StatusBar items={data.statuses} />
+                {data.paymentMix && data.paymentMix.length > 0 && (
+                  <>
+                    <h3 className="sub-title">Formas de pagamento</h3>
+                    <PaymentMix items={data.paymentMix} />
+                  </>
+                )}
               </section>
             </div>
             <div className="grid-2">
@@ -141,6 +147,33 @@ export function DashboardPage() {
   );
 }
 
+function delta(now: number, before: number | undefined | null) {
+  if (before === undefined || before === null) return null;
+  if (before === 0) return now === 0 ? 0 : null;
+  return ((now - before) / before) * 100;
+}
+
+const mixLabel: Record<string, string> = { CARD: "Cartão", PIX: "PIX", BOLETO: "Boleto", CHECKOUT: "Checkout externo" };
+
+function PaymentMix({ items }: { items: { method: string; orders: number; amount: number }[] }) {
+  const total = items.reduce((s, i) => s + i.amount, 0) || 1;
+  return (
+    <ul className="mix">
+      {items.map((i) => (
+        <li key={i.method}>
+          <span className="mix-label">{mixLabel[i.method] ?? i.method}</span>
+          <span className="mix-track">
+            <span className="mix-fill" style={{ width: `${(i.amount / total) * 100}%` }} />
+          </span>
+          <span className="num mix-value">
+            {Math.round((i.amount / total) * 100)}% · {i.orders} ped.
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Kpi({ label, value, change }: { label: string; value: string; change?: number | null }) {
   return (
     <div className="kpi">
@@ -149,7 +182,7 @@ function Kpi({ label, value, change }: { label: string; value: string; change?: 
       {change !== undefined && change !== null && (
         <span className={`kpi-change small ${change >= 0 ? "up" : "down"}`}>
           {change >= 0 ? "+" : "−"}
-          {Math.abs(change).toFixed(1).replace(".", ",")}% sobre o período anterior
+          {Math.abs(change).toFixed(1).replace(".", ",")}% vs. período anterior
         </span>
       )}
     </div>

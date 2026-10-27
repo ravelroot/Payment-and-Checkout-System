@@ -1,3 +1,4 @@
+import { CheckoutSteps } from "../features/CheckoutSteps";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,7 +14,7 @@ export function CartPage() {
   return (
     <Page>
       <div className="wrap">
-        <PageHeader title="Carrinho" subtitle={cart.count ? `${cart.count} itens` : undefined} />
+        <PageHeader title="Carrinho" subtitle={cart.count ? `${cart.count} itens` : undefined} actions={cart.count ? <CheckoutSteps current={0} /> : undefined} />
         {cart.items.length === 0 ? (
           <div className="card">
             <Empty icon="bag" title="Seu carrinho está vazio" text="Os produtos que você adicionar aparecem aqui." action={<Link className="btn" to="/">Ir para a loja</Link>} />

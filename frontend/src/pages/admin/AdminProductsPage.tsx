@@ -1,3 +1,4 @@
+import { ExportButton } from "../../features/ExportButton";
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "../../components/Icon";
@@ -42,9 +43,12 @@ export function AdminProductsPage() {
           title="Produtos"
           subtitle={data ? `${data.total} produtos` : undefined}
           actions={
-            <Link className="btn" to="/admin/produtos/novo">
-              <Icon name="plus" size={16} /> Novo produto
-            </Link>
+            <>
+              <ExportButton path="/api/admin/products/export" name="velo-produtos.csv" />
+              <Link className="btn" to="/admin/produtos/novo">
+                <Icon name="plus" size={16} /> Novo produto
+              </Link>
+            </>
           }
         />
         <div className="toolbar">

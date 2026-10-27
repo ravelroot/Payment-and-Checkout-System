@@ -1,3 +1,4 @@
+import { ExportButton } from "../../features/ExportButton";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Icon } from "../../components/Icon";
@@ -33,7 +34,11 @@ export function AdminOrdersPage() {
   return (
     <Page>
       <div className="wrap wide">
-        <PageHeader title="Pedidos" subtitle={data ? `${data.total} pedidos` : undefined} />
+        <PageHeader
+          title="Pedidos"
+          subtitle={data ? `${data.total} pedidos` : undefined}
+          actions={<ExportButton path={"/api/admin/orders/export" + qs({ status, q: term, from, to })} name="velo-pedidos.csv" />}
+        />
         <div className="toolbar">
           <label className="search">
             <Icon name="search" size={18} />

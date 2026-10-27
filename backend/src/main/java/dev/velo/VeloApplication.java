@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConfigurationPropertiesScan
 public class VeloApplication {
 
+    public static final String VERSION = "1.15.0";
+
     public static void main(String[] args) {
         SpringApplication.run(VeloApplication.class, args);
     }

@@ -60,7 +60,7 @@ export function maskPhone(v: string) {
 
 export const roleLabel = { ADMIN: "Administrador", STAFF: "Equipe", CUSTOMER: "Cliente" } as const;
 
-export const methodLabel = { CARD: "Cartão de crédito", PIX: "PIX", BOLETO: "Boleto", CHECKOUT: "Stripe Checkout" } as const;
+export const methodLabel = { CARD: "Cartão de crédito", PIX: "PIX", BOLETO: "Boleto", CHECKOUT: "Checkout externo" } as const;
 
 export const paymentStatusLabel = {
   PENDING: "Pendente",

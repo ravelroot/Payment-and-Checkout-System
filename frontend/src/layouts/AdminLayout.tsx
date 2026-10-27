@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { Icon } from "../components/Icon";
 import { Logo } from "../components/Logo";
+import { CommandPalette } from "../features/CommandPalette";
 import { AnimatedOutlet } from "./AnimatedOutlet";
 import { UserMenu } from "./UserMenu";
 
@@ -13,8 +15,11 @@ const items = [
   { to: "/admin/cupons", label: "Cupons", icon: "ticket" }
 ];
 
+const mac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
+
 export function AdminLayout() {
   const { user } = useAuth();
+  const [palette, setPalette] = useState(false);
   return (
     <div className="admin-shell">
       <aside className="sidebar">
@@ -22,7 +27,13 @@ export function AdminLayout() {
           <Logo size={20} />
         </Link>
         <span className="sidebar-tag">Painel</span>
+        <button className="palette-trigger" onClick={() => setPalette(true)}>
+          <Icon name="search" size={16} />
+          <span className="grow">Buscar ou ir…</span>
+          <kbd className="kbd">{mac ? "⌘" : "Ctrl"} K</kbd>
+        </button>
         <nav aria-label="Painel">
+          <span className="nav-group">Operação</span>
           {items.map((i) => (
             <NavLink key={i.to} to={i.to} end={i.end}>
               <Icon name={i.icon} size={19} />
@@ -30,10 +41,17 @@ export function AdminLayout() {
             </NavLink>
           ))}
           {user?.role === "ADMIN" && (
-            <NavLink to="/admin/usuarios">
-              <Icon name="users" size={19} />
-              Usuários
-            </NavLink>
+            <>
+              <span className="nav-group">Administração</span>
+              <NavLink to="/admin/usuarios">
+                <Icon name="users" size={19} />
+                Usuários
+              </NavLink>
+              <NavLink to="/admin/integracoes">
+                <Icon name="plug" size={19} />
+                Integrações
+              </NavLink>
+            </>
           )}
           <hr />
           <NavLink to="/" end>
@@ -47,6 +65,7 @@ export function AdminLayout() {
       <div className="admin-main">
         <AnimatedOutlet />
       </div>
+      <CommandPalette open={palette} onOpenChange={setPalette} />
     </div>
   );
 }

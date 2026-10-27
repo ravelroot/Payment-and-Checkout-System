@@ -47,6 +47,12 @@ velo:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
       webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+    mercado-pago:
+      access-token: ${MERCADOPAGO_ACCESS_TOKEN:}
+      webhook-secret: ${MERCADOPAGO_WEBHOOK_SECRET:}
+  webhooks:
+    url: ${VELO_WEBHOOK_URL:}
+    secret: ${VELO_WEBHOOK_SECRET:}
 
 logging:
   level:

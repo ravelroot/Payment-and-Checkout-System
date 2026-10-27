@@ -1,3 +1,4 @@
+import { PixQr } from "./PixQr";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Icon } from "../components/Icon";
@@ -187,7 +188,20 @@ export function Payments({ order, simulated, onChange }: { order: OrderDetail; s
             )}
           </span>
           {p.failureReason && <span className="field-error">{p.failureReason}</span>}
-          {p.status === "PENDING" && p.pixCode && <CopyLine value={p.pixCode} label="Código PIX" />}
+          {p.status === "PENDING" && p.pixCode && (
+            <div className="pix-box">
+              <PixQr value={p.pixCode} />
+              <div className="stack sm grow">
+                <strong>Pague com PIX</strong>
+                <ol className="pix-steps muted small">
+                  <li>Abra o app do seu banco e escolha pagar com PIX.</li>
+                  <li>Leia o QR Code ou cole o código abaixo.</li>
+                  <li>Confirme o valor: a aprovação é imediata.</li>
+                </ol>
+                <CopyLine value={p.pixCode} label="Código PIX" />
+              </div>
+            </div>
+          )}
           {p.status === "PENDING" && p.boletoLine && <CopyLine value={p.boletoLine} label="Linha digitável" />}
           {p.status === "PENDING" && p.expiresAt && <span className="muted small">Válido até {dateTime(p.expiresAt)}</span>}
           {p.status === "PENDING" && p.checkoutUrl && (

@@ -1,10 +1,13 @@
 package dev.velo.order;
 
 import dev.velo.auth.CurrentUser;
+import dev.velo.common.Csv;
 import dev.velo.common.PageResponse;
 import jakarta.validation.Valid;
+import java.time.Clock;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminOrderController {
 
     private final OrderService orders;
+    private final Clock clock;
 
-    public AdminOrderController(OrderService orders) {
+    public AdminOrderController(OrderService orders, Clock clock) {
         this.orders = orders;
+        this.clock = clock;
     }
 
     @GetMapping
@@ -32,6 +37,15 @@ public class AdminOrderController {
                                                 @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "20") int size) {
         return orders.search(new OrderService.Filter(customerId, status, q, from, to, page, size));
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> export(@RequestParam(required = false) OrderStatus status,
+                                         @RequestParam(required = false) String q,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                         @RequestParam(required = false) Long customerId) {
+        return orders.export(new OrderService.Filter(customerId, status, q, from, to, 0, Csv.MAX_ROWS)).download("velo-pedidos", clock);
     }
 
     @GetMapping("/{number}")

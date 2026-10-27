@@ -34,7 +34,22 @@ const paths: Record<string, string> = {
   filter: "M4 6h16M7 12h10M10 18h4",
   refresh: "M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5",
   eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
-  lock: "M6 11h12v10H6zM8 11V8a4 4 0 0 1 8 0v3"
+  lock: "M6 11h12v10H6zM8 11V8a4 4 0 0 1 8 0v3",
+  heart: "M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z",
+  heartFill: "M12 20s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 10c0 5.65-7 10-7 10Z",
+  sun: "M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-13v2m0 14v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M3 12h2m14 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",
+  moon: "M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z",
+  monitor: "M3 5h18v11H3zM8 20h8m-4-4v4",
+  command: "M9 6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6Z",
+  download: "M12 4v11m-5-5 5 5 5-5M5 20h14",
+  plug: "M9 3v5m6-5v5M6 8h12v3a6 6 0 0 1-12 0V8Zm6 9v4",
+  webhook: "M9 15a4 4 0 1 1-1.5-6.9M12 8a4 4 0 1 1 6.6 3M15 17h-6l3.5-6M18 21a4 4 0 0 0 0-8",
+  printer: "M7 9V3h10v6M7 17H4v-8h16v8h-3M7 14h10v7H7z",
+  pin: "M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Zm0-9a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
+  send: "M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z",
+  key: "M15 9a4 4 0 1 1-3.9 4.9L4 21v-3h3v-3h3l1.1-1.1A4 4 0 0 1 15 9Zm1.5-1.5h.01",
+  bolt: "M13 3 5 14h6l-1 7 8-11h-6l1-7Z",
+  sliders: "M4 7h10m4 0h2M4 17h4m4 0h8M14 5v4m-6 6v4"
 };
 
 export type IconName = keyof typeof paths;
@@ -45,7 +60,7 @@ export function Icon({ name, size = 20, stroke = 1.7 }: { name: IconName | strin
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={name === "heartFill" ? "currentColor" : "none"}
       stroke="currentColor"
       strokeWidth={stroke}
       strokeLinecap="round"

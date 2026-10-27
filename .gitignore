@@ -14,3 +14,5 @@ backend/deps.log
 Thumbs.db
 backend/baixar-dependencias.cmd
 *.tsbuildinfo
+__pycache__/
+*.pyc

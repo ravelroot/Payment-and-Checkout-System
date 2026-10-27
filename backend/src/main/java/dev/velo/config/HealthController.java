@@ -1,5 +1,6 @@
 package dev.velo.config;
 
+import dev.velo.VeloApplication;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,6 @@ public class HealthController {
 
     @GetMapping("/api/health")
     public Map<String, String> health() {
-        return Map.of("status", "ok", "app", "Velo");
+        return Map.of("status", "ok", "app", "Velo", "version", VeloApplication.VERSION);
     }
 }

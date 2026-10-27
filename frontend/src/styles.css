@@ -6,13 +6,17 @@
   --mauve: #959b9f;
   --ink: #15181b;
   --ink-2: #2f3539;
+  --on-ink: #ffffff;
   --muted: #5f666b;
   --line: #e2e5e6;
   --line-strong: #cfd3d5;
   --surface: #ffffff;
   --surface-hover: #f3f4f4;
   --accent: #1f5c4c;
+  --accent-strong: #174638;
   --accent-soft: #e4efeb;
+  --signal: #15181b;
+  --signal-soft: #eceeee;
   --danger: #a03a32;
   --danger-soft: #f8e9e7;
   --ok: #1f6b45;
@@ -20,13 +24,49 @@
   --warn: #8a5a12;
   --warn-soft: #f8efdf;
   --focus: rgba(31, 92, 76, 0.22);
+  --overlay: rgba(21, 24, 27, 0.4);
   --radius-s: 4px;
   --radius: 6px;
   --radius-l: 8px;
   --shadow: 0 1px 2px rgba(21, 24, 27, 0.06);
+  --shadow-pop: 0 16px 48px -16px rgba(21, 24, 27, 0.35);
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --font: "Public Sans Variable", "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
   color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --paper: #111314;
+  --paper-2: #181b1d;
+  --sand: #22262a;
+  --stone: #3a3f43;
+  --mauve: #6c7378;
+  --ink: #eceeee;
+  --ink-2: #cfd3d5;
+  --on-ink: #15181b;
+  --muted: #9aa1a5;
+  --line: #2a2e31;
+  --line-strong: #3a3f43;
+  --surface: #181b1d;
+  --surface-hover: #202427;
+  --accent: #6cbfa3;
+  --accent-strong: #8fd3bb;
+  --accent-soft: #1b302a;
+  --signal: #eceeee;
+  --signal-soft: #22262a;
+  --danger: #ec8d84;
+  --danger-soft: #3a201d;
+  --ok: #7fcb9f;
+  --ok-soft: #1b3326;
+  --warn: #e3b46a;
+  --warn-soft: #362a17;
+  --focus: rgba(108, 191, 163, 0.28);
+  --overlay: rgba(0, 0, 0, 0.6);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 18px 48px -18px rgba(0, 0, 0, 0.7);
+  color-scheme: dark;
 }
 
 *,
@@ -165,7 +205,7 @@ p {
 
 .btn {
   --bg: var(--ink);
-  --fg: #ffffff;
+  --fg: var(--on-ink);
   --bd: var(--ink);
   appearance: none;
   display: inline-flex;
@@ -437,7 +477,7 @@ p {
 
 .pill.ink {
   background: var(--ink);
-  color: #ffffff;
+  color: var(--on-ink);
 }
 
 .pill.line {
@@ -586,7 +626,7 @@ p {
   padding: 10px 16px 10px 14px;
   border-radius: var(--radius);
   background: var(--ink);
-  color: #ffffff;
+  color: var(--on-ink);
   font-size: 14px;
   font-weight: 500;
   box-shadow: 0 6px 20px -8px rgba(21, 24, 27, 0.35);
@@ -604,7 +644,7 @@ p {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(21, 24, 27, 0.4);
+  background: var(--overlay);
   display: grid;
   place-items: center;
   padding: 20px;
@@ -618,7 +658,7 @@ p {
   background: var(--paper-2);
   border-radius: var(--radius-l);
   padding: 24px;
-  box-shadow: 0 16px 48px -16px rgba(21, 24, 27, 0.35);
+  box-shadow: var(--shadow-pop);
 }
 
 .modal h2 {
@@ -635,7 +675,7 @@ p {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(21, 24, 27, 0.32);
+  background: var(--overlay);
   z-index: 80;
 }
 

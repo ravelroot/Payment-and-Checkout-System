@@ -5,6 +5,13 @@ import { useAuth, useIsBackoffice } from "../auth/AuthContext";
 import { useSessionClock } from "../auth/SessionWatcher";
 import { Icon } from "../components/Icon";
 import { clock, roleLabel } from "../lib/format";
+import { useTheme, type ThemeMode } from "../lib/prefs";
+
+const THEMES: { mode: ThemeMode; label: string; icon: string }[] = [
+  { mode: "light", label: "Claro", icon: "sun" },
+  { mode: "dark", label: "Escuro", icon: "moon" },
+  { mode: "system", label: "Sistema", icon: "monitor" }
+];
 
 export function UserMenu({ placement = "down" }: { placement?: "down" | "up" }) {
   const { user, logout } = useAuth();
@@ -12,6 +19,7 @@ export function UserMenu({ placement = "down" }: { placement?: "down" | "up" }) 
   const ref = useRef<HTMLDivElement>(null);
   const left = useSessionClock();
   const backoffice = useIsBackoffice();
+  const theme = useTheme();
 
   useEffect(() => {
     if (!open) return;
@@ -63,6 +71,19 @@ export function UserMenu({ placement = "down" }: { placement?: "down" | "up" }) 
               <span>
                 Sessão termina em <strong className="num">{clock(left)}</strong>
               </span>
+            </div>
+            <div className="menu-theme" role="radiogroup" aria-label="Tema">
+              {THEMES.map((t) => (
+                <button
+                  key={t.mode}
+                  role="radio"
+                  aria-checked={theme.mode === t.mode}
+                  className={theme.mode === t.mode ? "on" : ""}
+                  onClick={() => theme.setMode(t.mode)}
+                >
+                  <Icon name={t.icon} size={15} /> {t.label}
+                </button>
+              ))}
             </div>
             {backoffice && (
               <Link to="/admin" role="menuitem" onClick={() => setOpen(false)}>

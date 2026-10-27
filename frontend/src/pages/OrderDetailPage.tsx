@@ -85,12 +85,19 @@ export function OrderDetailPage() {
           </div>
         ) : (
           <>
+            <div className="print-only receipt-head">
+              <strong>Velo · Comprovante do pedido</strong>
+              <span>Emitido em {dateTime(new Date().toISOString())}</span>
+            </div>
             <PageHeader
               title={<span className="num">Pedido {order.number}</span>}
               subtitle={`Feito em ${dateTime(order.placedAt)}`}
               actions={
                 <>
                   <StatusPill status={order.status} label={order.statusLabel} />
+                  <button className="btn ghost sm no-print" onClick={() => window.print()}>
+                    <Icon name="printer" size={16} /> Imprimir comprovante
+                  </button>
                   {order.canCancel && (
                     <button className="btn quiet" onClick={() => setCancelOpen(true)}>
                       Cancelar pedido

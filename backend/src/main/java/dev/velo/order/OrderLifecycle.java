@@ -4,7 +4,9 @@ import dev.velo.catalog.CatalogService;
 import dev.velo.common.ApiException;
 import dev.velo.coupon.CouponService;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,15 +18,17 @@ public class OrderLifecycle {
     private final OrderStatusHistoryRepository history;
     private final CatalogService catalog;
     private final CouponService coupons;
+    private final ApplicationEventPublisher events;
     private final Clock clock;
 
     public OrderLifecycle(OrderRepository orders, OrderItemRepository items, OrderStatusHistoryRepository history,
-                          CatalogService catalog, CouponService coupons, Clock clock) {
+                          CatalogService catalog, CouponService coupons, ApplicationEventPublisher events, Clock clock) {
         this.orders = orders;
         this.items = items;
         this.history = history;
         this.catalog = catalog;
         this.coupons = coupons;
+        this.events = events;
         this.clock = clock;
     }
 
@@ -65,7 +69,12 @@ public class OrderLifecycle {
         order.setStatus(to);
         Order saved = orders.save(order);
         log(saved, from, to, note, userId, now);
+        publish(saved, OrderEvent.type(to));
         return saved;
+    }
+
+    void publish(Order order, String type) {
+        events.publishEvent(OrderEvent.of(type, order, Instant.now(clock)));
     }
 
     void log(Order order, OrderStatus from, OrderStatus to, String note, Long userId, LocalDateTime when) {

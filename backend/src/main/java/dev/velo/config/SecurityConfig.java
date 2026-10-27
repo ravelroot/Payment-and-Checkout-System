@@ -38,12 +38,13 @@ public class SecurityConfig {
                         .contentSecurityPolicy(c -> c.policyDirectives(
                                 "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
                                         + "font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; "
-                                        + "form-action 'self' https://checkout.stripe.com")))
+                                        + "form-action 'self' https://checkout.stripe.com https://www.mercadopago.com.br")))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/logout").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/payments/webhook/stripe").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/payments/webhook/stripe", "/api/payments/webhook/mercadopago").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/integrations/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "STAFF")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())

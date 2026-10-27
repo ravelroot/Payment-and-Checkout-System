@@ -47,7 +47,32 @@ export function LoginPage() {
   };
 
   return (
-    <div className="login">
+    <div className="login split">
+      <aside className="login-aside" aria-hidden>
+        <div className="login-brand">
+          <Mark size={22} />
+          <Wordmark size={22} />
+        </div>
+        <div className="login-aside-text">
+          <span className="eyebrow">Loja e checkout de código aberto</span>
+          <p className="display">Do carrinho ao pagamento confirmado, sem atalhos escondidos.</p>
+        </div>
+        <ul className="login-facts">
+          <li>
+            <strong>Cartão, PIX e boleto</strong>
+            <span>Simulado para testar, Stripe ou Mercado Pago para cobrar de verdade.</span>
+          </li>
+          <li>
+            <strong>Painel completo</strong>
+            <span>Pedidos, estoque, cupons, exportação CSV e webhooks para outros sistemas.</span>
+          </li>
+          <li>
+            <strong>Sessão protegida</strong>
+            <span>Token só em memória, limite de tempo conferido no servidor.</span>
+          </li>
+        </ul>
+        <span className="login-version num">Velo 1.15.0 · Licença MIT</span>
+      </aside>
       <section className="login-panel">
         <div className="login-brand">
           <Mark size={22} title="Velo" />

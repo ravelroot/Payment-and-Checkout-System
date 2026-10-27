@@ -85,3 +85,34 @@ export function qs(params: Record<string, string | number | boolean | null | und
   const s = p.toString();
   return s ? `?${s}` : "";
 }
+
+/** Baixa um arquivo de uma rota autenticada (ex.: exportação CSV) sem expor o token na URL. */
+export async function download(path: string, fallbackName: string) {
+  const headers: Record<string, string> = {};
+  const token = hooks.token();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  let res: Response;
+  try {
+    res = await fetch(path, { headers });
+  } catch {
+    throw new ApiError(0, "NETWORK", "Não foi possível falar com o servidor. Confira se a API está rodando.");
+  }
+  const idle = res.headers.get("X-Velo-Idle-Expires-At");
+  const max = res.headers.get("X-Velo-Expires-At");
+  if (idle && max) hooks.onSession(Number(idle), Number(max));
+  if (!res.ok) {
+    const data = safeJson(await res.text()) as { code?: string; message?: string } | null;
+    throw new ApiError(res.status, data?.code ?? "ERROR", data?.message ?? "Não foi possível gerar o arquivo.");
+  }
+  const blob = await res.blob();
+  const name = /filename="?([^";]+)"?/.exec(res.headers.get("Content-Disposition") ?? "")?.[1] ?? fallbackName;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return name;
+}

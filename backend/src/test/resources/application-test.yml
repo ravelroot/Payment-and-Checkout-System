@@ -8,6 +8,9 @@ spring:
       ddl-auto: validate
 velo:
   seed: true
+  webhooks:
+    url: ""
+    secret: ""
 logging:
   level:
     root: WARN

@@ -6,6 +6,7 @@ import dev.velo.catalog.CatalogService;
 import dev.velo.catalog.Product;
 import dev.velo.catalog.ProductRepository;
 import dev.velo.common.ApiException;
+import dev.velo.common.Csv;
 import dev.velo.common.Money;
 import dev.velo.common.PageResponse;
 import dev.velo.common.Texts;
@@ -144,6 +145,7 @@ public class OrderService {
             coupons.consume(applied.coupon());
         }
         lifecycle.log(o, null, OrderStatus.PENDING_PAYMENT, "Pedido realizado", userId, now);
+        lifecycle.publish(o, OrderEvent.CREATED);
         carts.clear(userId);
         return o;
     }
@@ -286,6 +288,42 @@ public class OrderService {
                     u == null ? null : u.getFullName(), u == null ? null : u.getEmail());
         }).toList();
         return PageResponse.of(out, page, size, total);
+    }
+
+    /**
+     * Mesmos filtros da listagem, em CSV (até {@link Csv#MAX_ROWS} linhas, mais recentes primeiro).
+     */
+    @Transactional(readOnly = true)
+    public Csv export(Filter f) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Order> cq = cb.createQuery(Order.class);
+        Root<Order> root = cq.from(Order.class);
+        cq.select(root).where(predicates(cb, root, f)).orderBy(cb.desc(root.get("placedAt")), cb.desc(root.get("id")));
+        List<Order> list = em.createQuery(cq).setMaxResults(Csv.MAX_ROWS).getResultList();
+        List<Long> orderIds = list.stream().map(Order::getId).toList();
+        List<Long> userIds = list.stream().map(Order::getUserId).distinct().toList();
+        Map<Long, Integer> counts = new HashMap<>();
+        for (int i = 0; i < orderIds.size(); i += 500) {
+            for (Object[] row : items.quantities(orderIds.subList(i, Math.min(orderIds.size(), i + 500)))) {
+                counts.put(((Number) row[0]).longValue(), ((Number) row[1]).intValue());
+            }
+        }
+        Map<Long, User> owners = new HashMap<>();
+        for (int i = 0; i < userIds.size(); i += 500) {
+            users.findAllById(userIds.subList(i, Math.min(userIds.size(), i + 500))).forEach(u -> owners.put(u.getId(), u));
+        }
+        Map<Long, String> paymentLabels = payments.exportLabels(orderIds);
+        Csv csv = new Csv().row("Número", "Data", "Cliente", "E-mail", "Situação", "Itens", "Subtotal", "Desconto", "Frete", "Total",
+                "Pagamento", "Rastreio");
+        for (Order o : list) {
+            User u = owners.get(o.getUserId());
+            csv.row(o.getNumber(), Csv.dateTime(o.getPlacedAt()), Csv.text(u == null ? null : u.getFullName()),
+                    Csv.text(u == null ? null : u.getEmail()), OrderLifecycle.label(o.getStatus()),
+                    Csv.number(counts.getOrDefault(o.getId(), 0)), Csv.money(o.getSubtotal()), Csv.money(o.getDiscount()),
+                    Csv.money(o.getShippingCost()), Csv.money(o.getTotal()), paymentLabels.getOrDefault(o.getId(), ""),
+                    Csv.text(o.getTrackingCode()));
+        }
+        return csv;
     }
 
     private Predicate[] predicates(CriteriaBuilder cb, Root<Order> root, Filter f) {

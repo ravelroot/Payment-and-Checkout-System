@@ -1,6 +1,7 @@
+import { useRef, useState } from "react";
 import { Field } from "../components/Ui";
-import { ApiError } from "../lib/api";
-import { maskCep } from "../lib/format";
+import { ApiError, get } from "../lib/api";
+import { digits, maskCep } from "../lib/format";
 import type { Address } from "../lib/types";
 
 export type AddressInput = Omit<Address, "id" | "isDefault"> & { isDefault?: boolean };
@@ -30,13 +31,48 @@ export function AddressFields({
   showDefault?: boolean;
 }) {
   const set = <K extends keyof AddressInput>(k: K, v: AddressInput[K]) => onChange({ ...value, [k]: v });
+  const [cepState, setCepState] = useState<{ kind: "idle" | "busy" | "ok" | "error"; text?: string }>({ kind: "idle" });
+  const last = useRef("");
+  const lookup = async (masked: string) => {
+    const d = digits(masked);
+    onChange({ ...value, zipCode: masked });
+    if (d.length !== 8 || d === last.current) return;
+    last.current = d;
+    setCepState({ kind: "busy" });
+    try {
+      const r = await get<{ street: string; district: string; city: string; state: string }>(`/api/address/cep/${d}`);
+      onChange({
+        ...value,
+        zipCode: masked,
+        street: r.street || value.street,
+        district: r.district || value.district,
+        city: r.city || value.city,
+        state: r.state || value.state
+      });
+      setCepState({ kind: "ok", text: `${r.city}/${r.state}` });
+    } catch (e) {
+      setCepState({ kind: "error", text: e instanceof ApiError ? e.message : "Preencha o endereço manualmente." });
+    }
+  };
+  const cepHint =
+    cepState.kind === "busy" ? (
+      <span className="row tight">
+        <span className="spinner sm" /> Buscando endereço…
+      </span>
+    ) : cepState.kind === "ok" ? (
+      <span className="ok-text">Endereço preenchido · {cepState.text}</span>
+    ) : cepState.kind === "error" ? (
+      <span className="warn-text">{cepState.text}</span>
+    ) : (
+      "Preenchemos rua, bairro e cidade pelo CEP."
+    );
   return (
     <div className="form-grid">
       <Field label="Apelido" className="span-2">
         <input className="input" value={value.label} maxLength={40} onChange={(e) => set("label", e.target.value)} placeholder="Casa, Trabalho…" />
       </Field>
-      <Field label="CEP" error={errors.zipCode} className="span-2">
-        <input className="input num" inputMode="numeric" value={value.zipCode} onChange={(e) => set("zipCode", maskCep(e.target.value))} placeholder="00000-000" />
+      <Field label="CEP" error={errors.zipCode} hint={cepHint} className="span-2">
+        <input className="input num" inputMode="numeric" autoComplete="postal-code" value={value.zipCode} onChange={(e) => lookup(maskCep(e.target.value))} placeholder="00000-000" />
       </Field>
       <Field label="Quem recebe" error={errors.recipient} className="span-4">
         <input className="input" value={value.recipient} maxLength={120} onChange={(e) => set("recipient", e.target.value)} />

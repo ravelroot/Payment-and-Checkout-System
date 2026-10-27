@@ -2,6 +2,7 @@ package dev.velo.catalog;
 
 import dev.velo.cart.CartItemRepository;
 import dev.velo.common.ApiException;
+import dev.velo.common.Csv;
 import dev.velo.common.Money;
 import dev.velo.common.PageResponse;
 import dev.velo.common.Texts;
@@ -113,6 +114,22 @@ public class CatalogService {
         }
         o.add(cb.asc(root.get("id")));
         return o;
+    }
+
+    /**
+     * Catálogo completo (inclusive inativos) em CSV, até {@link Csv#MAX_ROWS} produtos.
+     */
+    @Transactional(readOnly = true)
+    public Csv export() {
+        List<Product> list = em.createQuery("select p from Product p left join fetch p.category order by p.name asc, p.id asc",
+                Product.class).setMaxResults(Csv.MAX_ROWS).getResultList();
+        Csv csv = new Csv().row("SKU", "Produto", "Categoria", "Preço", "Preço anterior", "Estoque", "Ativo");
+        for (Product p : list) {
+            Category c = p.getCategory();
+            csv.row(Csv.text(p.getSku()), Csv.text(p.getName()), Csv.text(c == null ? null : c.getName()), Csv.money(p.getPrice()),
+                    Csv.money(p.getCompareAtPrice()), Csv.number(p.getStock()), Csv.yesNo(p.isActive()));
+        }
+        return csv;
     }
 
     @Transactional(readOnly = true)

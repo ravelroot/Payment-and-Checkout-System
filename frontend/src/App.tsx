@@ -14,6 +14,7 @@ import { AdminOrderPage } from "./pages/admin/AdminOrderPage";
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage";
 import { AdminProductPage } from "./pages/admin/AdminProductPage";
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage";
+import { AdminIntegrationsPage } from "./pages/admin/AdminIntegrationsPage";
 import { AdminUsersPage } from "./pages/admin/AdminUsersPage";
 import { DashboardPage } from "./pages/admin/DashboardPage";
 import { CartPage } from "./pages/CartPage";
@@ -56,6 +57,7 @@ export function App() {
                       <Route path="cupons" element={<AdminCouponsPage />} />
                       <Route element={<RequireRole roles={["ADMIN"]} />}>
                         <Route path="usuarios" element={<AdminUsersPage />} />
+                        <Route path="integracoes" element={<AdminIntegrationsPage />} />
                       </Route>
                       <Route path="*" element={<NotFoundPage />} />
                     </Route>

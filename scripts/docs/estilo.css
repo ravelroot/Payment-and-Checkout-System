@@ -1,0 +1,167 @@
+/* Identidade visual dos PDFs da Velo (1.15.0) */
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400;
+  src: url("fontes/instrument-serif-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400;
+  src: url("fontes/instrument-serif-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400;
+  src: url("fontes/instrument-serif-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Public Sans"; font-style: normal; font-weight: 100 900;
+  src: url("fontes/public-sans-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Public Sans"; font-style: normal; font-weight: 100 900;
+  src: url("fontes/public-sans-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Public Sans"; font-style: italic; font-weight: 100 900;
+  src: url("fontes/public-sans-latin-wght-italic.woff2") format("woff2-variations"); }
+@font-face { font-family: "Velo Mono"; src: url("fontes/DejaVuSansMono.ttf") format("truetype"); }
+
+:root {
+  --papel: #F6F7F7; --superficie: #FFFFFF; --borda: #E2E5E6; --apoio: #5F666B;
+  --tinta: #15181B; --pinho: #1F5C4C; --alerta: #A03A32;
+}
+
+@page {
+  size: A4;
+  margin: 24mm 19mm 20mm 19mm;
+  @top-left { content: "{{CABECALHO}}"; font: 400 7.6pt "Public Sans"; color: #5F666B;
+    letter-spacing: .02em; vertical-align: bottom; padding-bottom: 3.2mm; border-bottom: .5pt solid #E2E5E6; }
+  @top-right { content: "{{VERSAO}}"; font: 400 7.6pt "Public Sans"; color: #5F666B; vertical-align: bottom;
+    padding-bottom: 3.2mm; border-bottom: .5pt solid #E2E5E6; }
+  @bottom-right { content: counter(page); font: 500 8pt "Public Sans"; font-variant-numeric: tabular-nums;
+    color: #15181B; vertical-align: top; padding-top: 4mm; }
+}
+@page capa { margin: 0; @top-left { content: none; border: 0; } @top-right { content: none; border: 0; }
+  @bottom-right { content: none; } @bottom-left { content: none; } }
+@page paisagem { size: A4 landscape; margin: 16mm 14mm 15mm 14mm; }
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { margin: 0; background: #FFFFFF; color: var(--tinta); font-family: "Public Sans", sans-serif;
+  font-size: 9.8pt; line-height: 1.5; font-feature-settings: "kern"; hyphens: manual; }
+
+/* Capa */
+.capa { page: capa; position: relative; width: 210mm; height: 297mm; background: var(--papel); overflow: hidden; break-after: page; }
+.capa .faixa { position: absolute; left: 0; top: 0; bottom: 0; width: 13mm; background: var(--pinho); }
+.capa .fio { position: absolute; left: 13mm; top: 0; bottom: 0; width: 1.6mm; background: #E2E5E6; }
+.capa .conteudo { position: absolute; left: 34mm; right: 22mm; top: 40mm; bottom: 26mm; }
+.capa .logo { width: 22mm; display: block; }
+.capa .marca { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 132pt; line-height: .9;
+  letter-spacing: -.02em; margin: 38mm 0 0 -1.5mm; color: var(--tinta); }
+.capa .titulo { font-size: 19pt; font-weight: 600; margin-top: 9mm; letter-spacing: -.005em; }
+.capa .subtitulo { font-size: 11.5pt; color: var(--apoio); margin-top: 2.5mm; max-width: 120mm; }
+.capa .regua { width: 28mm; height: 1.2pt; background: var(--pinho); margin: 13mm 0 5mm; }
+.capa .autor { font-size: 10pt; }
+.capa .autor b { font-weight: 600; }
+.capa .rodape { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between;
+  border-top: .6pt solid #D5D9DB; padding-top: 4mm; font-size: 8.6pt; color: var(--apoio); font-variant-numeric: tabular-nums; }
+.capa .rodape b { color: var(--tinta); font-weight: 600; }
+
+/* Sumário */
+.sumario { break-after: page; }
+.sumario h1 { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 34pt; line-height: 1.05; margin: 2mm 0 9mm; }
+.sumario ol { list-style: none; margin: 0; padding: 0; }
+.sumario li { break-inside: avoid; }
+.sumario a { color: inherit; text-decoration: none; display: flex; align-items: baseline; gap: 2mm; }
+.sumario .n1 > a { font-weight: 600; font-size: 10.4pt; margin-top: 4.2mm; padding-top: 0; }
+.sumario .n1 > a .num { color: var(--pinho); width: 7mm; flex: none; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sumario .n2 > a { font-size: 9.2pt; color: #2F3539; padding-left: 9mm; margin-top: .9mm; }
+.sumario .pontos { flex: 1; border-bottom: .9pt dotted #B5BBBE; transform: translateY(-.25em); min-width: 6mm; }
+.sumario .pg { font-variant-numeric: tabular-nums; min-width: 7mm; text-align: right; }
+
+/* Capítulos */
+.capitulo { break-before: page; }
+.capitulo .rotulo { font-size: 7.8pt; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--pinho); margin: 0 0 3mm; }
+.capitulo h1 { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 36pt; line-height: 1.04; letter-spacing: -.01em;
+  margin: 0 0 4mm; }
+.capitulo .abertura { font-size: 11.4pt; line-height: 1.5; color: #444B50; max-width: 150mm; margin: 0 0 6mm;
+  padding-bottom: 6mm; border-bottom: .6pt solid var(--borda); }
+h2 { font-size: 13pt; font-weight: 600; letter-spacing: -.005em; margin: 7.5mm 0 2.2mm; break-after: avoid; line-height: 1.25; }
+h3 { font-size: 10pt; font-weight: 600; margin: 4.5mm 0 1.5mm; break-after: avoid; }
+h2 + h3 { margin-top: 2mm; }
+p { margin: 0 0 2.6mm; orphans: 3; widows: 3; }
+.apoio { color: var(--apoio); }
+strong { font-weight: 600; }
+a { color: var(--pinho); }
+ul.lista { margin: 0 0 3mm; padding-left: 4.2mm; }
+ul.lista li { margin: 0 0 1.1mm; padding-left: 1mm; }
+ul.lista li::marker { color: var(--pinho); }
+.mantem { break-inside: avoid; }
+.junto { break-before: avoid; }
+.quebra { break-before: page; }
+
+/* Passos numerados */
+ol.passos { list-style: none; counter-reset: passo; margin: 0 0 3mm; padding: 0; }
+ol.passos > li { counter-increment: passo; position: relative; padding: 0 0 0 9mm; margin: 0 0 2.2mm; break-inside: avoid; }
+ol.passos > li::before { content: counter(passo); position: absolute; left: 0; top: .1mm; width: 5.4mm; height: 5.4mm;
+  border-radius: 50%; border: .8pt solid var(--pinho); color: var(--pinho); font-size: 7.8pt; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
+
+/* Código */
+code, pre, .mono { font-family: "Velo Mono", "DejaVu Sans Mono", monospace; }
+code { font-size: 8.1pt; background: var(--papel); border: .5pt solid #E6E9EA; border-radius: 2px; padding: .1mm 1mm; white-space: nowrap; }
+pre { font-size: 7.9pt; line-height: 1.5; background: var(--papel); border: .5pt solid #E6E9EA; border-radius: 3px;
+  padding: 3mm 3.6mm; margin: 0 0 3.5mm; white-space: pre-wrap; word-break: break-word; break-inside: avoid; color: #1F2326; }
+pre code { background: none; border: 0; padding: 0; font-size: inherit; white-space: inherit; }
+pre .rotulo-cod { display: block; font-family: "Public Sans"; font-size: 6.8pt; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--apoio); margin-bottom: 1.6mm; }
+td code { white-space: normal; word-break: break-word; }
+
+/* Tabelas */
+table { width: 100%; border-collapse: collapse; margin: 1mm 0 4mm; font-size: 8.7pt; line-height: 1.42; font-variant-numeric: tabular-nums; }
+thead { display: table-header-group; }
+th { background: var(--papel); text-align: left; font-weight: 600; font-size: 7.9pt; color: #2F3539; padding: 1.8mm 2.4mm;
+  border-top: .6pt solid var(--borda); border-bottom: .6pt solid var(--borda); }
+td { padding: 1.7mm 2.4mm; border-bottom: .5pt solid var(--borda); vertical-align: top; }
+tr { break-inside: avoid; }
+td.num, th.num { text-align: right; }
+td.c, th.c { text-align: center; }
+td .nao { color: var(--apoio); }
+table.compacta { font-size: 8.2pt; }
+table.compacta td { padding: 1.25mm 2.2mm; }
+.metodo { font-family: "Velo Mono", monospace; font-size: 7.4pt; font-weight: 400; color: var(--pinho); letter-spacing: .02em; }
+.novo { display: inline-block; font-size: 6.4pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--pinho);
+  border: .6pt solid #9DB8AF; border-radius: 2px; padding: 0 1.1mm; margin-left: 1.2mm; vertical-align: .4pt; line-height: 1.5; }
+
+/* Destaques */
+.nota { border-left: 3px solid var(--pinho); background: var(--papel); padding: 2.6mm 4mm 2.4mm; margin: 1mm 0 4mm; break-inside: avoid; border-radius: 0 3px 3px 0; }
+.nota .t { font-weight: 600; display: block; margin-bottom: .6mm; }
+.nota p:last-child { margin-bottom: 0; }
+.nota.alerta { border-left-color: var(--alerta); }
+.nota.alerta .t { color: var(--alerta); }
+
+/* Figuras */
+figure { margin: 2mm 0 5mm; break-inside: avoid; text-align: center; }
+figure img.tela { display: block; margin: 0 auto; border: .75pt solid var(--borda); border-radius: 3px; }
+figure.diagrama { margin: 3mm 0 5mm; }
+figure.diagrama svg { display: block; margin: 0 auto; height: auto; background: transparent !important; }
+figcaption { font-size: 8pt; color: var(--apoio); margin-top: 2.2mm; text-align: center; }
+figcaption b { color: var(--tinta); font-weight: 600; }
+.pendente { margin: 0 auto; border: .9pt dashed #CFD3D5; border-radius: 3px; background: var(--papel); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1.6mm; color: var(--apoio); }
+.pendente .ic { width: 9mm; height: 6mm; border: .9pt solid #BCC1C4; border-radius: 1.5px; position: relative; }
+.pendente .ic::after { content: ""; position: absolute; left: 1.4mm; right: 1.4mm; bottom: 1.2mm; height: 1.6mm; border-top: .9pt solid #BCC1C4; }
+.pendente .l1 { font-size: 8.6pt; font-weight: 600; color: #474E53; }
+.pendente .l2 { font-family: "Velo Mono"; font-size: 7.4pt; }
+.dupla { display: flex; gap: 5mm; align-items: flex-start; justify-content: center; }
+.dupla figure { flex: 1; }
+
+/* Paleta */
+.paleta { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.4mm; margin: 2mm 0 4mm; break-inside: avoid; }
+.paleta .amostra { height: 15mm; border-radius: 3px; border: .6pt solid var(--borda); }
+.paleta .hex { font-family: "Velo Mono"; font-size: 7.3pt; margin-top: 1.4mm; }
+.paleta .uso { font-size: 7.3pt; color: var(--apoio); line-height: 1.35; }
+.tipos { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin: 2mm 0 4mm; break-inside: avoid; }
+.tipos > div { border: .6pt solid var(--borda); border-radius: 3px; padding: 3.5mm 4mm; }
+.tipos .serif { font-family: "Instrument Serif"; font-size: 30pt; line-height: 1; }
+.tipos .sans { font-size: 19pt; font-weight: 600; line-height: 1.05; letter-spacing: -.01em; }
+.tipos .num { font-variant-numeric: tabular-nums; font-size: 12pt; margin-top: 2mm; }
+.tipos .leg { font-size: 7.6pt; color: var(--apoio); margin-top: 2mm; }
+
+/* Paisagem (diagrama completo) */
+.paisagem { page: paisagem; break-before: page; }
+.paisagem + * { break-before: page; }
+.paisagem h2 { margin-top: 0; }
+
+pre.mermaid { background: none; border: 0; padding: 0; margin: 0; white-space: normal; }

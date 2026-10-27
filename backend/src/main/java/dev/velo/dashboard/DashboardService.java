@@ -8,6 +8,8 @@ import dev.velo.order.OrderDtos;
 import dev.velo.order.OrderLifecycle;
 import dev.velo.order.OrderService;
 import dev.velo.order.OrderStatus;
+import dev.velo.payment.PaymentMethod;
+import dev.velo.payment.PaymentStatus;
 import dev.velo.user.UserRole;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,8 +51,18 @@ public class DashboardService {
     public record LowStock(Long id, String name, String sku, int stock, int threshold) {
     }
 
+    /**
+     * Os mesmos indicadores de {@link Kpis} no período imediatamente anterior, de mesmo tamanho.
+     */
+    public record Previous(BigDecimal revenue, long orders, BigDecimal averageTicket, long newCustomers) {
+    }
+
+    public record PaymentMix(PaymentMethod method, long orders, BigDecimal amount) {
+    }
+
     public record View(int days, Kpis kpis, List<Day> sales, List<StatusCount> statuses, List<TopProduct> topProducts,
-                       List<LowStock> lowStock, List<OrderDtos.Summary> recentOrders) {
+                       List<LowStock> lowStock, List<OrderDtos.Summary> recentOrders, Previous previous,
+                       List<PaymentMix> paymentMix) {
     }
 
     private final EntityManager em;
@@ -82,6 +95,12 @@ public class DashboardService {
         BigDecimal avg = count == 0 ? Money.ZERO : revenue.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
         long newCustomers = em.createQuery("select count(u) from User u where u.role = :r and u.createdAt >= :from", Long.class)
                 .setParameter("r", UserRole.CUSTOMER).setParameter("from", from).getSingleResult();
+        long previousCount = ((Number) previous[0]).longValue();
+        BigDecimal previousAvg = previousCount == 0 ? Money.ZERO
+                : before.divide(BigDecimal.valueOf(previousCount), 2, RoundingMode.HALF_UP);
+        long previousCustomers = em.createQuery(
+                        "select count(u) from User u where u.role = :r and u.createdAt >= :from and u.createdAt < :to", Long.class)
+                .setParameter("r", UserRole.CUSTOMER).setParameter("from", previousFrom).setParameter("to", from).getSingleResult();
         long toShip = em.createQuery("select count(o) from Order o where o.status in :s", Long.class)
                 .setParameter("s", List.of(OrderStatus.PAID, OrderStatus.PROCESSING)).getSingleResult();
         long awaiting = em.createQuery("select count(o) from Order o where o.status = :s", Long.class)
@@ -126,9 +145,21 @@ public class DashboardService {
                 .map((Product p) -> new LowStock(p.getId(), p.getName(), p.getSku(), p.getStock(), p.getLowStockThreshold()))
                 .toList();
 
+        List<PaymentMix> mix = em.createQuery("select p.method, count(distinct o.id), coalesce(sum(p.amount), 0) from Payment p, Order o "
+                        + "where p.orderId = o.id and o.placedAt >= :from and o.status in :s and p.status = :paid "
+                        + "group by p.method", Object[].class)
+                .setParameter("from", from).setParameter("s", PAID).setParameter("paid", PaymentStatus.PAID).getResultList().stream()
+                .map(r -> new PaymentMix((PaymentMethod) r[0], ((Number) r[1]).longValue(), Money.of(decimal(r[2]))))
+                .sorted(Comparator.comparing(PaymentMix::amount).reversed())
+                .toList();
+
         PageResponse<OrderDtos.Summary> recent = orders.search(new OrderService.Filter(null, null, null, null, null, 0, 6));
         return new View(d, new Kpis(revenue, change, count, avg, newCustomers, toShip, awaiting, lowAll.size()), sales, statuses, top, low,
-                recent.items());
+                recent.items(), new Previous(before, previousCount, previousAvg, previousCustomers), mix);
+    }
+
+    private static BigDecimal decimal(Object value) {
+        return value instanceof BigDecimal b ? b : new BigDecimal(value.toString());
     }
 
     private Object[] totals(LocalDateTime from, LocalDateTime to) {

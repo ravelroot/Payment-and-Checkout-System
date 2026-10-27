@@ -3,6 +3,7 @@ package dev.velo.catalog;
 import dev.velo.auth.CurrentUser;
 import dev.velo.common.PageResponse;
 import jakarta.validation.Valid;
+import java.time.Clock;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,13 @@ public class AdminCatalogController {
     private final CatalogService catalog;
     private final CategoryRepository categories;
     private final ProductRepository products;
+    private final Clock clock;
 
-    public AdminCatalogController(CatalogService catalog, CategoryRepository categories, ProductRepository products) {
+    public AdminCatalogController(CatalogService catalog, CategoryRepository categories, ProductRepository products, Clock clock) {
         this.catalog = catalog;
         this.categories = categories;
         this.products = products;
+        this.clock = clock;
     }
 
     @GetMapping("/categories")
@@ -64,6 +67,11 @@ public class AdminCatalogController {
                                                             @RequestParam(defaultValue = "20") int size) {
         return catalog.search(new CatalogService.Search(q, category, null, null, sort == null ? "name" : sort, false, true, null,
                 page, size)).map(CatalogService::detail);
+    }
+
+    @GetMapping("/products/export")
+    public ResponseEntity<byte[]> exportProducts() {
+        return catalog.export().download("velo-produtos", clock);
     }
 
     @GetMapping("/products/{id}")

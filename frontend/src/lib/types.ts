@@ -102,7 +102,7 @@ export interface OrderSummary {
 
 export interface PaymentView {
   id: number;
-  provider: "SIMULATED" | "STRIPE";
+  provider: "SIMULATED" | "STRIPE" | "MERCADO_PAGO";
   method: PaymentMethod;
   status: PaymentStatus;
   amount: number;
@@ -164,7 +164,7 @@ export interface OrderDetail {
 }
 
 export interface PaymentOptions {
-  provider: "SIMULATED" | "STRIPE";
+  provider: "SIMULATED" | "STRIPE" | "MERCADO_PAGO";
   methods: PaymentMethod[];
   maxInstallments: number;
   simulated: boolean;
@@ -250,4 +250,6 @@ export interface Dashboard {
   topProducts: { name: string; quantity: number; revenue: number }[];
   lowStock: { id: number; name: string; sku: string; stock: number; threshold: number }[];
   recentOrders: OrderSummary[];
+  previous?: Partial<{ revenue: number; orders: number; paidOrders: number; averageTicket: number; newCustomers: number }>;
+  paymentMix?: { method: PaymentMethod; orders: number; amount: number }[];
 }
